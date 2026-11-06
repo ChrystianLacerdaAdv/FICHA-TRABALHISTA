@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ficha de Levantamento Trabalhista</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7f7;--sf:#fff;--ink:#1c2b2e;--mu:#58696c;--ac:#1f6f6b;--acink:#fff;--ln:#d3dcdc;--ok:#e3f1ef;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111a1b;--sf:#192426;--ink:#e6eeee;--mu:#9fb0b2;--ac:#5cc2bb;--acink:#0d1a1b;--ln:#2c3b3d;--ok:#1d3433}}
+:root[data-theme="dark"]{--bg:#111a1b;--sf:#192426;--ink:#e6eeee;--mu:#9fb0b2;--ac:#5cc2bb;--acink:#0d1a1b;--ln:#2c3b3d;--ok:#1d3433}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:20px 18px 48px}
+h1{font-size:1.6rem;line-height:1.2;margin:8px 0 6px}
+h2{font-size:1.3rem;margin:0 0 4px}
+.intro{color:var(--mu);margin:0 0 18px}
+.bar{height:6px;background:var(--ln);border-radius:3px;overflow:hidden;margin:14px 0 6px}
+.bar i{display:block;height:100%;background:var(--ac);transition:width .25s}
+.cnt{color:var(--mu);font-size:.9rem;margin:0 0 16px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:18px}
+.q{margin:0 0 20px}
+.q:last-child{margin-bottom:0}
+label.l,.q>span.l{display:block;font-weight:700;margin-bottom:6px}
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:10px 12px}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus,button:focus-visible,.opt:focus-within{outline:3px solid var(--ac);outline-offset:1px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border:1px solid var(--ln);border-radius:8px;margin-bottom:6px;cursor:pointer;background:var(--bg)}
+.opt input{margin-top:5px;accent-color:var(--ac)}
+.opt.on{background:var(--ok);border-color:var(--ac)}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:18px}
+button{font:inherit;font-weight:700;border-radius:8px;padding:11px 18px;border:1px solid var(--ac);cursor:pointer;min-height:46px}
+.pri{background:var(--ac);color:var(--acink)}
+.sec{background:transparent;color:var(--ac)}
+textarea.out{min-height:300px;font-size:.92rem}
+.msg{color:var(--ac);font-weight:700;min-height:1.5em;margin:10px 0 0}
+.note{color:var(--mu);font-size:.92rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Ficha de Levantamento Trabalhista</h1>
+<p class="intro">Responda no seu ritmo. Se não souber ou não lembrar, escreva “não sei” e continue. Suas respostas ficam salvas neste aparelho enquanto você preenche.</p>
+<div class="bar"><i id="bar"></i></div>
+<p class="cnt" id="cnt"></p>
+<div class="card" id="card"></div>
+<div class="nav"><button class="sec" id="prev">Voltar</button><button class="pri" id="next">Continuar</button></div>
+</main>
+<script>
+var S=[
+["Seus dados",[["Nome completo","s"],["Data de nascimento","s"],["Profissão","s"],["Cidade e estado","s"],["Telefone/WhatsApp","s"],["E-mail","s"]]],
+["Sobre a empresa",[["Nome da empresa (e CNPJ, se souber)","s"],["Endereço onde você trabalha ou trabalhava","s"],["Nome do seu chefe direto","s"],["A empresa faz parte de um grupo com outras empresas? Quais?","s"],["Presta serviço para outra empresa (terceirizado)? Qual e desde quando?","s"],["Quantos funcionários a empresa tem, aproximadamente?","s"]]],
+["O que está acontecendo",[["Marque o que se aplica","m|Não recebo corretamente salário, horas extras ou outras verbas|Trabalho sem carteira assinada ou com data errada|Fui demitido(a) ou estou prestes a ser|Dúvidas sobre o pagamento da rescisão|Assédio moral ou sexual|Acidente ou doença ligada ao trabalho|Acúmulo ou desvio de função|Horas extras, intervalos ou jornada abusiva|Outro"],["Conte com suas palavras o que está acontecendo, na ordem em que as coisas aconteceram","l"],["O que você gostaria que acontecesse?","l"]]],
+["Contrato de trabalho",[["Tipo de contrato","c|CLT (carteira assinada)|Temporário|Estágio|Sem registro|Outro"],["Data de admissão registrada na carteira","s"],["Você começou na data da carteira ou antes?","s"],["Ainda trabalha lá?","c|Sim|Não"],["Data da demissão (se houver)","s"],["Motivo da saída (sem justa causa, justa causa, pedido de demissão, acordo, outro)","s"],["Como foi a demissão? Você estava doente ou com atestado?","l"],["Acha que a demissão foi discriminatória?","s"],["Última função exercida","s"],["Funções que teve na empresa e em que períodos","l"],["Teve promoções? Quantas e quais?","s"],["Setores ou locais em que trabalhou","s"],["Já foi transferido(a) de cidade? Provisório ou definitivo? A empresa pagou as despesas?","s"]]],
+["Funções e cargo",[["Houve acúmulo de funções? Diga para qual função foi contratado(a), qual outra passou a fazer, quais atividades, quantas vezes por semana e desde quando","l"],["Já trabalhou em desvio de função (fazendo algo diferente do cargo registrado)? Em que período?","s"],["Algum colega tinha o mesmo cargo e função? Ganhava mais? Nome, cargo e tempo de casa dele(a)","l"],["Exercia cargo de chefia, de confiança ou de gerência? Quais eram as funções?","s"],["Tinha metas? Elas mudavam com frequência?","s"]]],
+["Salário e pagamentos",[["Último salário (ou o maior)","s"],["Evolução salarial (valores e datas dos aumentos)","l"],["Recebia valor “por fora”, sem constar no holerite? Quanto, desde quando e como acontecia?","l"],["Teve algum desconto que considera indevido?","s"],["Recebia comissões, bônus ou prêmios?","s"],["Usava o próprio carro ou combustível no trabalho? Como a empresa reembolsava?","s"],["Se foi demitido(a): recebeu as verbas da rescisão corretamente? Em que data e de que forma?","l"],["Sabe se a empresa depositava o FGTS corretamente?","s"],["Sabe quanto tempo de contribuição ao INSS você tem?","s"]]],
+["Jornada de trabalho",[["Jornada prevista em contrato","s"],["Quantos e quais dias da semana trabalhava?","s"],["Jornada real (horário de entrada e saída)","s"],["Descansava aos domingos? Com que frequência?","s"],["Houve alternância de jornada ou de turno?","s"],["Fazia intervalo (almoço, café, janta)? Quanto tempo?","s"],["Fazia horas extras? Recebia por elas? No holerite ou “por fora”?","l"],["Havia controle de ponto (cartão, biometria, aplicativo, folha)? Como funcionava?","l"],["Os horários do ponto correspondiam ao que você realmente trabalhava?","s"],["Se não havia ponto: a empresa tinha mais de 10 funcionários?","s"],["Seu chefe ligava ou acompanhava sua localização, rotas e rotinas? Entregava relatórios de jornada?","l"],["Podia fazer o horário que quisesse ou precisava prestar contas da jornada?","s"],["A empresa deu telefone, computador ou carro? Você respondia mensagens, e-mails ou ligações fora do horário? De que forma?","l"]]],
+["Benefícios",[["Vale-transporte","c|Recebia|Não recebia"],["Vale-transporte vinha em dinheiro, cartão ou ticket?","s"],["Vale-alimentação ou refeição","c|Recebia|Não recebia"],["Vale-alimentação vinha em dinheiro, cartão ou ticket?","s"],["Plano de saúde: tinha? Como era o pagamento?","s"],["Ajuda de custo (viagens, por exemplo)","s"],["Auxílio-creche","s"],["Algum benefício foi cortado? Qual e quando?","s"]]],
+["Saúde e segurança no trabalho",[["Descreva o local de trabalho","l"],["Suas atividades ofereciam algum risco?","s"],["Ficava exposto(a) a ruído, calor, frio, umidade, produtos químicos ou outros agentes nocivos? Quantas vezes por dia ou semana?","l"],["Precisava entrar em cabine de energia elétrica?","s"],["Quais EPIs (equipamentos de proteção) recebia? Teve treinamento? Eram substituídos? Você usava? A empresa exigia?","l"],["Já sofreu acidente de trabalho? Quando?","s"],["Teve problema de saúde ligado ao trabalho? Em que período?","s"],["A empresa emitiu CAT (Comunicação de Acidente de Trabalho)?","s"],["Tem algum problema de saúde atual? Faz tratamento ou toma medicamentos?","s"],["Ficou afastado(a) pelo INSS? Motivo, período e benefício recebido","l"],["Participava da CIPA ou de sindicato? Em qual cargo?","s"]]],
+["Relacionamento no trabalho",[["Como era sua relação com chefes e colegas?","l"],["Você acha que sofreu assédio moral, humilhação, discriminação ou dano moral? Descreva o que aconteceu, quando e quem presenciou","l"],["Como você se sentiu com isso?","l"]]],
+["Somente para mulheres (pule se não se aplica)",[["Estava grávida quando foi demitida ou quando os problemas começaram?","s"],["Ficou afastada na gravidez? Por quanto tempo?","s"],["Seu direito à amamentação foi respeitado?","s"],["Depois que engravidou, passou a ter problemas na empresa? Quais?","l"]]],
+["Processos e testemunhas",[["Já entrou com ação contra esse empregador? Número, vara e comarca","s"],["Já foi testemunha em processo contra esse empregador? Número, vara e comarca","s"],["Quem pode confirmar o que você relatou? Nome e período em que trabalharam com você","l"]]],
+["Documentos e provas",[["Marque o que você tem e guarde tudo (fotos e prints também valem)","m|Carteira de trabalho (CTPS)|Contrato de trabalho|Holerites|Extrato do FGTS|Recibos de férias|Termo de rescisão|Atestados médicos ou CAT|Mensagens de WhatsApp, e-mails ou prints|Registros de ponto, escalas ou relatórios|Fotos, vídeos ou áudios|Outros"],["Mais alguma informação que você considera importante","l"]]]
+];
+var A={},step=0,N=S.length+1,card=document.getElementById("card");
+try{A=JSON.parse(localStorage.getItem("ficha")||"{}")}catch(e){A={}}
+function save(){try{localStorage.setItem("ficha",JSON.stringify(A))}catch(e){}}
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
+function render(){
+  var h="";
+  document.getElementById("bar").style.width=(step/(N-1)*100)+"%";
+  if(step<S.length){
+    var sec=S[step];
+    document.getElementById("cnt").textContent="Parte "+(step+1)+" de "+S.length;
+    h="<h2>"+esc(sec[0])+"</h2><p class='note'>Tudo opcional. Responda o que souber.</p>";
+    sec[1].forEach(function(q,i){
+      var k=step+"."+i,p=q[1].split("|"),t=p[0],v=A[k]||"";
+      h+="<div class='q'>";
+      if(t=="s")h+="<label class='l' for='f"+k+"'>"+esc(q[0])+"</label><input type='text' id='f"+k+"' data-k='"+k+"' value=\""+esc(v)+"\">";
+      else if(t=="l")h+="<label class='l' for='f"+k+"'>"+esc(q[0])+"</label><textarea id='f"+k+"' data-k='"+k+"'>"+esc(v)+"</textarea>";
+      else{
+        var multi=t=="m",sel=multi?(Array.isArray(v)?v:[]):v;
+        h+="<span class='l'>"+esc(q[0])+"</span>";
+        p.slice(1).forEach(function(o){
+          var on=multi?sel.indexOf(o)>-1:sel==o;
+          h+="<label class='opt"+(on?" on":"")+"'><input type='"+(multi?"checkbox":"radio")+"' name='f"+k+"' data-k='"+k+"' data-m='"+(multi?1:0)+"' value=\""+esc(o)+"\""+(on?" checked":"")+"><span>"+esc(o)+"</span></label>";
+        });
+      }
+      h+="</div>";
+    });
+    document.getElementById("next").textContent=step==S.length-1?"Revisar respostas":"Continuar";
+  }else{
+    document.getElementById("cnt").textContent="Última etapa";
+    h="<h2>Revise e envie</h2><p class='note'>Toque em “Copiar respostas” e cole numa conversa para quem vai analisar. Se o botão não funcionar, selecione o texto abaixo e copie manualmente.</p><textarea class='out' id='out' readonly></textarea><div class='nav'><button class='pri' id='cp'>Copiar respostas</button></div><p class='msg' id='msg' role='status'></p>";
+    document.getElementById("next").style.display="none";
+  }
+  card.innerHTML=h;
+  document.getElementById("prev").style.visibility=step?"visible":"hidden";
+  if(step>=S.length){
+    var o=document.getElementById("out");o.value=build();
+    document.getElementById("cp").onclick=function(){copy(o)};
+  }else document.getElementById("next").style.display="";
+  window.scrollTo(0,0);
+}
+card.addEventListener("input",function(e){
+  var k=e.target.dataset.k;if(!k)return;
+  if(e.target.dataset.m=="1"){
+    var a=[];card.querySelectorAll("input[data-k='"+k+"']:checked").forEach(function(c){a.push(c.value)});A[k]=a;
+  }else if(e.target.type=="radio")A[k]=e.target.value;
+  else A[k]=e.target.value;
+  if(e.target.type=="radio"||e.target.type=="checkbox"){
+    card.querySelectorAll("input[data-k='"+k+"']").forEach(function(c){c.parentNode.classList.toggle("on",c.checked)});
+  }
+  save();
+});
+function build(){
+  var t="FICHA DE LEVANTAMENTO TRABALHISTA\n";
+  S.forEach(function(sec,si){
+    var L=[];
+    sec[1].forEach(function(q,qi){
+      var v=A[si+"."+qi];if(Array.isArray(v))v=v.join("; ");
+      if(v&&String(v).trim())L.push("- "+q[0]+"\n  "+String(v).trim().replace(/\n/g,"\n  "));
+    });
+    if(L.length)t+="\n"+sec[0].toUpperCase()+"\n"+L.join("\n")+"\n";
+  });
+  return t;
+}
+function copy(o){
+  var m=document.getElementById("msg"),ok=false;
+  function done(){m.textContent="Respostas copiadas. Agora é só colar na conversa."}
+  function fb(){try{o.removeAttribute("readonly");o.select();o.setSelectionRange(0,999999);ok=document.execCommand("copy");o.setAttribute("readonly","")}catch(e){ok=false}
+    if(ok)done();else m.textContent="Não deu para copiar sozinho. Segure sobre o texto, selecione tudo e copie."}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(o.value).then(done,fb)}else fb()}catch(e){fb()}
+}
+document.getElementById("next").onclick=function(){if(step<N-1){step++;render()}};
+document.getElementById("prev").onclick=function(){if(step>0){step--;render()}};
+render();
+</script>
+</body>
+</html>
